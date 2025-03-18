@@ -33,18 +33,18 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 logging.basicConfig(level=logging.DEBUG)
 
 # LINEのWebhookエンドポイント
-@app.route("/callback", methods=["POST"])
-def callback():
-    signature = request.headers.get("X-Line-Signature", "")
-    body = request.get_data(as_text=True)
+# @app.route("/callback", methods=["POST"])
+# def callback():
+#     signature = request.headers.get("X-Line-Signature", "")
+#     body = request.get_data(as_text=True)
 
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        logging.error("Invalid signature error")
-        return jsonify({"error": "Invalid signature"}), 400
+#     try:
+#         handler.handle(body, signature)
+#     except InvalidSignatureError:
+#         logging.error("Invalid signature error")
+#         return jsonify({"error": "Invalid signature"}), 400
 
-    return "OK", 200
+#     return "OK", 200
 
 # メッセージイベントの処理
 @handler.add(MessageEvent)
@@ -75,13 +75,16 @@ def home():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    if request.method == 'POST':
-        # ここでLINEからのPOSTリクエストを処理
-        data = request.json
-        print(data)  # デバッグ用にデータを表示
-        return 'OK', 200
-    else:
-        abort(405)  # 他のメソッドには405を返す
+    signature = request.headers.get("X-Line-Signature", "")
+    body = request.get_data(as_text=True)
+
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        logging.error("Invalid signature error")
+        return jsonify({"error": "Invalid signature"}), 400
+
+    return "OK", 200
 
 if __name__ == '__main__':
     # Render ではポートが環境変数 PORT に設定される
