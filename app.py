@@ -32,6 +32,15 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 # ログの設定
 logging.basicConfig(level=logging.DEBUG)
 
+
+@app.route('/')
+def home():
+    return "Hello, world!"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
 # LINEのWebhookエンドポイント
 @app.route("/callback", methods=["POST"])
 def callback():
