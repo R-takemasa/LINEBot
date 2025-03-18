@@ -32,15 +32,6 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 # ログの設定
 logging.basicConfig(level=logging.DEBUG)
 
-
-@app.route('/')
-def home():
-    return "Hello, world!"
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 # LINEのWebhookエンドポイント
 @app.route("/callback", methods=["POST"])
 def callback():
@@ -78,6 +69,11 @@ def handle_line_message(event):
     # メッセージを送信
     messaging_api.reply_message(reply_request)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
-    
+@app.route('/')
+def home():
+    return "Hello, world!"
+
+if __name__ == '__main__':
+    # Render ではポートが環境変数 PORT に設定される
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
