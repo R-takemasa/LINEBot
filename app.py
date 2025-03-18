@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 import os
 import logging
 from linebot.v3.messaging.configuration import Configuration
@@ -72,6 +72,16 @@ def handle_line_message(event):
 @app.route('/')
 def home():
     return "Hello, world!"
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        # ここでLINEからのPOSTリクエストを処理
+        data = request.json
+        print(data)  # デバッグ用にデータを表示
+        return 'OK', 200
+    else:
+        abort(405)  # 他のメソッドには405を返す
 
 if __name__ == '__main__':
     # Render ではポートが環境変数 PORT に設定される
